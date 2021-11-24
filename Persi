@@ -1,0 +1,64 @@
+from gtts import gTTS
+import random
+import time
+import playsound
+import speech_recognition as sr
+import webbrowser
+
+def listen_command():
+    r = sr.Recognizer()
+    with sr.Microphone() as sourse:
+        print("Say something: ")
+        audio = r.listen(sourse)
+
+    try:
+        our_speech = r.recognize_google(audio, language="ru")
+        print("Вы сказали: "+ our_speech)
+        return our_speech
+    except sr.UnknownValueError:
+            return "error"
+    except sr.RequestError as e:
+            return "error"
+
+
+
+def do_this_command(message):
+    message = message.lower()
+    if "привет" in message:
+        say_message("Привет")
+        print(":)")
+    elif "пока" in message:
+        say_message("Пока")
+        print(":(")
+        say_message("Выхожу из голосового помощника!")
+        exit()
+    elif "перси" in message:
+        say_message("Привет человек!")
+    elif "как тебя зовут" in message:
+        say_message("Меня зовут Перси, я названа так создателем в честь его кошки")
+    elif "алло" in message:
+        say_message("Да, слушаю")
+    elif "хаю-хай" in message:
+        say_message("Открываю канал Иван Гай")
+        webbrowser.open_new_tab("https://www.youtube.com/c/EeOneGuy")
+    elif "переведи" in message:
+        say_message("Открываю яндекс переводчик")
+        webbrowser.open_new_tab("https://translate.yandex.ru/?utm_source=main_stripe_big")
+    else:
+        say_message("Команда не распознана!!!")
+
+def say_message(message):
+    voice = gTTS(message, lang="ru")
+    file_voice_name = "_audio_"+str(time.time())+str(random.randint(0,100000))+".mp3"
+    voice.save(file_voice_name)
+    playsound.playsound(file_voice_name)
+    print("Перси говорит: "+message)
+
+
+
+if __name__ == '__main__':
+    while True:
+        command = listen_command()
+        do_this_command(command)
+
+input("Нажмите Enter, чтобы выйти!")
